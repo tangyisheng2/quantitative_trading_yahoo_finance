@@ -53,11 +53,11 @@ class TickerTest(unittest.TestCase):
         ticker = TickerFactory.get_instance("TQQQ")
         price_data = ticker.get_data_on_date(datetime.date.today())
         price = price_data.loc[price_on]
-        self.assertEqual(ticker.get_holding_shares(), 0)
+        self.assertEqual(ticker.get_holding_share_number(), 0)
         # Test the increase function
         cost = ticker.buy(share=share, on=price_on)
         self.assertEqual(cost, share * price)
-        self.assertEqual(ticker.get_holding_shares(), share)
+        self.assertEqual(ticker.get_holding_share_number(), share)
 
     def test_decrease_less_holding_than_current_should_success(self):
         from simulator.Ticker.TickerFactory import TickerFactory
@@ -72,17 +72,17 @@ class TickerTest(unittest.TestCase):
         ticker = TickerFactory.get_instance("TQQQ")
         price_data = ticker.get_data_on_date(datetime.date.today())
         buy_price = price_data.loc[buy_price_on]
-        self.assertEqual(ticker.get_holding_shares(), 0)
+        self.assertEqual(ticker.get_holding_share_number(), 0)
         # Test the increase function
         cost = ticker.buy(share=buy_share, on=buy_price_on)
         self.assertEqual(cost, buy_share * buy_price)
-        self.assertEqual(ticker.get_holding_shares(), buy_share)
+        self.assertEqual(ticker.get_holding_share_number(), buy_share)
         # Test the decrease function
         sell_price = price_data.loc[sell_price_on]
-        self.assertEqual(ticker.get_holding_shares(), buy_share)
+        self.assertEqual(ticker.get_holding_share_number(), buy_share)
         earn = ticker.sell(share=sell_share, on=sell_price_on)
         self.assertEqual(earn, sell_share * sell_price)
-        self.assertEqual(ticker.get_holding_shares(), buy_share - sell_share)
+        self.assertEqual(ticker.get_holding_share_number(), buy_share - sell_share)
 
     def test_decrease_more_holding_than_current_should_failed(self):
         from simulator.Ticker.TickerFactory import TickerFactory
@@ -97,13 +97,13 @@ class TickerTest(unittest.TestCase):
         ticker = TickerFactory.get_instance("TQQQ")
         price_data = ticker.get_data_on_date(datetime.date.today())
         buy_price = price_data.loc[buy_price_on]
-        self.assertEqual(ticker.get_holding_shares(), 0)
+        self.assertEqual(ticker.get_holding_share_number(), 0)
         # Test the increase function
         cost = ticker.buy(share=buy_share, on=buy_price_on)
         self.assertEqual(cost, buy_share * buy_price)
-        self.assertEqual(ticker.get_holding_shares(), buy_share)
+        self.assertEqual(ticker.get_holding_share_number(), buy_share)
         # Test the decrease function
-        self.assertEqual(ticker.get_holding_shares(), buy_share)
+        self.assertEqual(ticker.get_holding_share_number(), buy_share)
         self.assertRaises(ValueError, lambda: ticker.sell(sell_share, sell_price_on))
 
     def test_get_today_data_before_close_should_not_have_error(self):
