@@ -16,8 +16,8 @@ class BaseTicker(TickerInterface):
     history: Optional[pd.DataFrame] = None
     holding: Optional[int] = None
 
-    def __init__(self, ticker, name):
-        # super().__init__(ticker, name)
+    def __init__(self, ticker: Ticker, name: str):
+        super().__init__(ticker, name)
         if not ticker or not name:
             raise AttributeError(f"Invalid attributes, got {ticker, name}")
         self._set_ticker(ticker)
@@ -29,6 +29,9 @@ class BaseTicker(TickerInterface):
 
     def _set_ticker_name(self, name: str) -> None:
         self.name = name
+
+    def get_ticker_name(self) -> str:
+        return self.name
 
     def get_history(self, period: str = "max") -> pd.DataFrame:
         ticker_history_df = self.ticker.history(period=period)
@@ -63,9 +66,9 @@ class BaseTicker(TickerInterface):
         return transaction_price * share
 
     def sell(self, share: int, on: str) -> float:
-        if share > self.get_holding_shares():
+        if share > self.get_holding_share_number():
             raise ValueError(
-                f"Insufficient share in hold, you have {self.get_holding_shares()}, but trying to sell {share}, canceling transaction")
+                f"Insufficient share in hold, you have {self.get_holding_share_number()}, but trying to sell {share}, canceling transaction")
 
         cur_date = datetime.date.today()
 
@@ -99,15 +102,15 @@ class BaseTicker(TickerInterface):
         """
         if self.holding is None:
             raise ValueError(f"Invalid holding, the ticker is not properly config")
-        if share > self.get_holding_shares():
+        if share > self.get_holding_share_number():
             raise ValueError(
-                f"Insufficient share in hold, you have {self.get_holding_shares()}, but trying to sell {share}, canceling transaction")
+                f"Insufficient share in hold, you have {self.get_holding_share_number()}, but trying to sell {share}, canceling transaction")
         self.holding -= share
         return True
 
-    def get_holding_shares(self) -> int:
+    def get_holding_share_number(self) -> int:
         return self.holding
 
     def get_holding_values(self) -> float:
         close_price = self.get_data_on_date(datetime.date.today()).loc["Close"]
-        return self.get_holding_shares() * close_price
+        return self.get_holding_share_number() * float(close_price)

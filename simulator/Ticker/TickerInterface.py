@@ -7,11 +7,11 @@ from yfinance import Ticker
 
 
 class TickerInterface:
-    # def __init__(self, ticker: Ticker, name: str):
-    #     """
-    #     This constructor sets the ticker object and its name
-    #     """
-    #     raise NotImplementedError()
+    def __init__(self, ticker: Ticker, name: str):
+        """
+        This constructor sets the ticker object and its name
+        """
+        pass
 
     def _set_ticker(self, ticker: Ticker) -> None:
         """
@@ -25,6 +25,13 @@ class TickerInterface:
         This method sets the name of the ticker
         :param name:
         :return:
+        """
+        raise NotImplementedError()
+
+    def get_ticker_name(self) -> str:
+        """
+        This method returns the ticker-name
+        :return: The name of the ticker
         """
         raise NotImplementedError()
 
@@ -64,7 +71,7 @@ class TickerInterface:
         """
         raise NotImplementedError()
 
-    def get_holding_shares(self) -> int:
+    def get_holding_share_number(self) -> int:
         """
         This method gets the holding shares for the current ticker.
         :return: The number of current holding shares
