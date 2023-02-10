@@ -5,8 +5,8 @@ from simulator.Ticker.BaseTicker import BaseTicker as Ticker
 
 
 class WalletInterface:
-    holding_ticker: List[Ticker] = []
-    holding_cash = None
+    _holding_ticker: List[Ticker] = []
+    _holding_cash = None
 
     def __init__(self):
         pass
@@ -24,6 +24,13 @@ class WalletInterface:
         """
         This method empty the cash wallet
         :return: None
+        """
+        raise NotImplementedError()
+
+    def get_cash_value(self) -> float:
+        """
+        This method returns the cash value in the wallet
+        :return: Cash value in the wallet
         """
         raise NotImplementedError()
 
