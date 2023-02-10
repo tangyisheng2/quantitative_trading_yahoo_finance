@@ -107,3 +107,7 @@ class BaseTicker(TickerInterface):
 
     def get_holding_shares(self) -> int:
         return self.holding
+
+    def get_holding_values(self) -> float:
+        close_price = self.get_data_on_date(datetime.date.today()).loc["Close"]
+        return self.get_holding_shares() * close_price

@@ -70,3 +70,10 @@ class TickerInterface:
         :return: The number of current holding shares
         """
         raise NotImplementedError()
+
+    def get_holding_values(self) -> float:
+        """
+        This method gets the value of the total holding shares.
+        :return: The total value of the holding
+        """
+        raise NotImplementedError()
