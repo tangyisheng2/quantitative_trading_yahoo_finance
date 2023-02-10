@@ -1,12 +1,12 @@
 #  Copyright (c) 2023.
 
-from typing import Optional, List
+from typing import Dict
 from simulator.Ticker.BaseTicker import BaseTicker as Ticker
 
 
 class WalletInterface:
-    _holding_ticker: List[Ticker] = []
-    _holding_cash = None
+    holding_ticker: Dict = {}
+    holding_cash = None
 
     def __init__(self):
         pass
@@ -57,5 +57,13 @@ class WalletInterface:
         *It shou throws an ValueError when there is not enough cash in the account.*
         :param value: Value of cash to be decreased to the account.
         :return: New account balance
+        """
+        raise NotImplementedError()
+
+    def update_ticker(self, ticker: Ticker) -> None:
+        """
+        This method updates the holding ticker property
+        :param ticker: ticker to be updated
+        :return: None
         """
         raise NotImplementedError()
