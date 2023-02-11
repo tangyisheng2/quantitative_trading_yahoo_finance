@@ -5,7 +5,7 @@ from simulator.Ticker.BaseTicker import BaseTicker as Ticker
 
 
 class WalletInterface:
-    holding_ticker: Dict = {}
+    holding_ticker: Dict[str, Ticker] = {}
     holding_cash = None
 
     def __init__(self):
