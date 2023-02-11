@@ -43,8 +43,8 @@ class BaseTicker(TickerInterface):
         return self.history
 
     def get_data_on_date(self, date: datetime.date) -> pd.Series:
-        if self.history is None:
-            self.get_history()
+        # Always fetch the latest data to calculate the value
+        self.get_history()
 
         try:
             ans = self.history.loc[date]
