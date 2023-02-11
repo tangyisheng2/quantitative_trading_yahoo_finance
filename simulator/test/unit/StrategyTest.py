@@ -30,7 +30,5 @@ class StrategyTest(unittest.TestCase):
         self.assertEqual(wallet.holding_ticker["TQQQ"].get_holding_share_number(), 5)
 
 
-
-
 if __name__ == '__main__':
     unittest.main()
