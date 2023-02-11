@@ -5,7 +5,7 @@ import unittest
 
 class TickerTest(unittest.TestCase):
     def test_one_plus_one_should_equal_two(self):
-        self.assertEqual(1 + 1, 2, "Success")
+        self.assertEqual(1 + 1, 2)
 
     def test_history_index_only_contains_date(self):
         from simulator.Ticker.TickerFactory import TickerFactory
@@ -112,6 +112,47 @@ class TickerTest(unittest.TestCase):
         ticker = TickerFactory.get_instance("TQQQ")
         ticker.get_data_on_date(datetime.date.today())
         # Succeed when no error raises
+
+    def test_ticker_value_calculation_overtime_should_success(self):
+        import datetime
+        from simulator.Ticker.BaseTicker import BaseTicker
+        import pandas as pd
+        # Set current date
+        today = datetime.datetime.now()
+        yesterday = today - datetime.timedelta(days=1)
+
+        # Construct Mock Ticker class
+        class Ticker:
+            def __init__(self):
+                self._history = None
+
+            def history(self, period):
+                return self._history
+
+            def test_set_history(self, data: pd.DataFrame):
+                self._history = data
+
+        ticker = Ticker()
+        base_ticker = BaseTicker(ticker=ticker, name="test")
+        base_ticker.holding = 1
+
+        ticker.test_set_history(pd.DataFrame(data=[[0, 0, 0, 10, 0, 0, 0, 0]
+                                                   ],
+                                             index=[yesterday],
+                                             columns=['Open', 'High', 'Low', 'Close', 'Volume', 'Dividends',
+                                                      'Stock Splits',
+                                                      'Capital Gains']))
+
+        self.assertEqual(base_ticker.get_holding_values(), 10)
+
+        ticker.test_set_history(pd.DataFrame(data=[[0, 0, 0, 10, 0, 0, 0, 0],
+                                                   [0, 0, 0, 20, 0, 0, 0, 0]],
+                                             index=[yesterday, today],
+                                             columns=['Open', 'High', 'Low', 'Close', 'Volume', 'Dividends',
+                                                      'Stock Splits',
+                                                      'Capital Gains']))
+
+        self.assertEqual(base_ticker.get_holding_values(), 20)
 
 
 if __name__ == '__main__':
