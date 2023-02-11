@@ -1,5 +1,6 @@
 #  Copyright (c) 2023.
 import datetime
+import math
 
 from simulator.Ticker.BaseTicker import BaseTicker as Ticker
 from simulator.Wallet.BaseWallet import BaseWallet as Wallet
@@ -22,7 +23,12 @@ class TradeManager(TradeManagerInterface):
         quote = price * share
         return quote
 
-    def buy(self, ticker: Ticker, share: int = 0, on: str = "Close") -> bool:
+    def buy(self, ticker: Ticker, amount: float = 0, share: int = 0, on: str = "Close") -> bool:
+        price_per_share = self.get_quote(ticker, 1, on)
+
+        if amount > 0 and not share:
+            share = math.ceil(amount / price_per_share)
+
         transaction_total = self.get_quote(ticker, share, on)
         if self.wallet.get_cash_value() < transaction_total:
             raise ValueError(f"Insufficient fund, require {transaction_total}, but got {self.wallet.get_cash_value()}")
@@ -32,7 +38,12 @@ class TradeManager(TradeManagerInterface):
         self.wallet.update_ticker(ticker)
         return True
 
-    def sell(self, ticker: Ticker, share: int = 0, on: str = "Close") -> bool:
+    def sell(self, ticker: Ticker, amount: float = 0, share: int = 0, on: str = "Close") -> bool:
+        price_per_share = self.get_quote(ticker, 1, on)
+
+        if amount > 0 and not share:
+            share = math.ceil(amount / price_per_share)
+
         transaction_total = self.get_quote(ticker, share, on)
         if ticker.get_holding_share_number() < share:
             raise ValueError(

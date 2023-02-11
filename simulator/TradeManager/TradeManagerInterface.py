@@ -22,24 +22,26 @@ class TradeManagerInterface:
         """
         raise NotImplementedError()
 
-    def buy(self, ticker: Ticker, share: int = 0, on: str = "Close") -> bool:
+    def buy(self, ticker: Ticker, amount: float = 0, share: int = 0, on: str = "Close") -> bool:
         """
         This method buys $share of $ticker.
         It needs to verify if the ticker is valid, and if there is sufficient fund to complete the transaction
-        :param on: The price for this transaction, it can be ["Open", "Close", "High", "Low"]
         :param ticker: ticker to buy
-        :param share: number of shares to buy
+        :param amount: The amount of share to buy, use math.ceiling to determine how many shares to buy
+        :param share: number of shares to buy (will be in higher priority compared to $amount)
+        :param on: The price for this transaction, it can be ["Open", "Close", "High", "Low"]
         :return: The transaction status, True -> success
         """
         raise NotImplementedError()
 
-    def sell(self, ticker: Ticker, share: int = 0, on: str = "Close") -> bool:
+    def sell(self, ticker: Ticker, amount: float = 0, share: int = 0, on: str = "Close") -> bool:
         """
         This method sell $share of $ticker.
         It needs to verify if the ticker is valid, and if there is sufficient fund to complete the transaction
-        :param on: The price for this transaction, it can be ["Open", "Close", "High", "Low"]
         :param ticker: ticker to buy
-        :param share: number of shares to buy
+        :param amount: The amount of share to sell, use math.ceiling to determine how many shares to sell
+        :param share: number of shares to buy (will be in higher priority compared to $amount)
+        :param on: The price for this transaction, it can be ["Open", "Close", "High", "Low"]
         :return: The transaction status, True -> success
         """
         raise NotImplementedError()
