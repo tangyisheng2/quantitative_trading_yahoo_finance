@@ -2,7 +2,7 @@
 import datetime
 import math
 
-from simulator.Ticker.BaseTicker import BaseTicker as Ticker
+from simulator.Ticker.BaseTicker import BaseTicker
 from simulator.Wallet.BaseWallet import BaseWallet as Wallet
 from simulator.TradeManager.TradeManagerInterface import TradeManagerInterface
 
@@ -18,16 +18,16 @@ class TradeManager(TradeManagerInterface):
     def set_wallet(self, wallet: Wallet):
         self.wallet = wallet
 
-    def get_quote(self, ticker: Ticker, share: int = 0, on: str = "Close") -> float:
+    def get_quote(self, ticker: BaseTicker, share: int = 0, on: str = "Close") -> float:
         price = ticker.get_data_on_date(datetime.date.today()).loc[on]
         quote = price * share
         return quote
 
-    def buy(self, ticker: Ticker, amount: float = 0, share: int = 0, on: str = "Close") -> bool:
+    def buy(self, ticker: BaseTicker, amount: float = 0, share: int = 0, on: str = "Close") -> bool:
         price_per_share = self.get_quote(ticker, 1, on)
 
         if amount > 0 and not share:
-            share = math.ceil(amount / price_per_share)
+            share = math.floor(amount / price_per_share)
 
         transaction_total = self.get_quote(ticker, share, on)
         if self.wallet.get_cash_value() < transaction_total:
@@ -38,11 +38,11 @@ class TradeManager(TradeManagerInterface):
         self.wallet.update_ticker(ticker)
         return True
 
-    def sell(self, ticker: Ticker, amount: float = 0, share: int = 0, on: str = "Close") -> bool:
+    def sell(self, ticker: BaseTicker, amount: float = 0, share: int = 0, on: str = "Close") -> bool:
         price_per_share = self.get_quote(ticker, 1, on)
 
         if amount > 0 and not share:
-            share = math.ceil(amount / price_per_share)
+            share = math.floor(amount / price_per_share)
 
         transaction_total = self.get_quote(ticker, share, on)
         if ticker.get_holding_share_number() < share:
