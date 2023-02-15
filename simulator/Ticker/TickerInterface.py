@@ -53,20 +53,22 @@ class TickerInterface:
         """
         raise NotImplementedError()
 
-    def buy(self, share: int, on: str) -> float:
+    def buy(self, share: int, on: str, date: datetime.date = None) -> float:
         """
         This method buys the ticker and returns the cost.
         :param on: The price for this transaction, it can be ["Open", "Close", "High", "Low"]
         :param share: the number of share to buy
+        :param date: The transaction date, if not specified, default to today
         :return: cost of the transaction
         """
         raise NotImplementedError()
 
-    def sell(self, share: int, on: str) -> float:
+    def sell(self, share: int, on: str, date: datetime.date = None) -> float:
         """
         This method sells the ticker and returns the cost
         :param on: The price for this transaction, it can be ["Open", "Close", "High", "Low"]
         :param share:
+        :param date: The transaction date, if not specified, default to today
         :return:
         """
         raise NotImplementedError()
@@ -78,9 +80,11 @@ class TickerInterface:
         """
         raise NotImplementedError()
 
-    def get_holding_values(self) -> float:
+    def get_holding_values(self, date: datetime.date = None) -> float:
         """
         This method gets the value of the total holding shares.
+        :param date: (Unittest) Calculate the holding assets based on the "Close" price of date,
+                    if not specified, use today's price
         :return: The total value of the holding
         """
         raise NotImplementedError()

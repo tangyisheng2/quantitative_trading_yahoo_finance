@@ -29,11 +29,12 @@ class StrategyInterface:
         """
         raise NotImplementedError()
 
-    def execute(self, trade_manager: TradeManager) -> None:
+    def execute(self, trade_manager: TradeManager, date: datetime.date = None) -> None:
         """
         This method executes the strategy.
         Put your strategy operation here.
         :param trade_manager: Trade Manager to handle the transaction
+        :param date: (Unittest) execute using the price on date
         :return:
         """
         raise NotImplementedError()

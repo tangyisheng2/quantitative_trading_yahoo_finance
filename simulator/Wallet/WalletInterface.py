@@ -1,5 +1,5 @@
 #  Copyright (c) 2023.
-
+import datetime
 from typing import Dict
 from simulator.Ticker.BaseTicker import BaseTicker as Ticker
 
@@ -34,9 +34,11 @@ class WalletInterface:
         """
         raise NotImplementedError()
 
-    def get_total_asset_value(self) -> float:
+    def get_total_asset_value(self, date: datetime.date = None) -> float:
         """
         This method calculates the total value of the assets in the account, including holding_ticker and the cash
+        :param date: (Unittest) Calculate the holding assets based on the "Close" price of date,
+                    if not specified, use today's price
         :return: Total asset value
         """
         raise NotImplementedError()

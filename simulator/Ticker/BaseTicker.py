@@ -54,10 +54,11 @@ class BaseTicker(TickerInterface):
 
         return ans
 
-    def buy(self, share: int, on: str) -> float:
-        cur_date = datetime.date.today()
+    def buy(self, share: int, on: str, date: datetime.date = None) -> float:
+        if not date:
+            date = datetime.date.today()
 
-        data = self.get_data_on_date(date=cur_date)
+        data = self.get_data_on_date(date=date)
         transaction_price = data.loc[on]
 
         if not transaction_price or transaction_price <= 0:
@@ -65,14 +66,15 @@ class BaseTicker(TickerInterface):
         self._increase_holding(share)
         return transaction_price * share
 
-    def sell(self, share: int, on: str) -> float:
+    def sell(self, share: int, on: str, date: datetime.date = None) -> float:
         if share > self.get_holding_share_number():
             raise ValueError(
                 f"Insufficient share in hold, you have {self.get_holding_share_number()}, but trying to sell {share}, canceling transaction")
 
-        cur_date = datetime.date.today()
+        if not date:
+            date = datetime.date.today()
 
-        data = self.get_data_on_date(date=cur_date)
+        data = self.get_data_on_date(date=date)
         transaction_price = data.loc[on]
 
         if not transaction_price or transaction_price <= 0:
@@ -111,6 +113,8 @@ class BaseTicker(TickerInterface):
     def get_holding_share_number(self) -> int:
         return self.holding
 
-    def get_holding_values(self) -> float:
-        close_price = self.get_data_on_date(datetime.date.today()).loc["Close"]
+    def get_holding_values(self, date: datetime.date = None) -> float:
+        if not date:
+            date = datetime.date.today()
+        close_price = self.get_data_on_date(date).loc["Close"]
         return self.get_holding_share_number() * float(close_price)
