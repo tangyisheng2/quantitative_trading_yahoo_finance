@@ -1,5 +1,6 @@
 #  Copyright (c) 2023.
 import datetime
+import logging
 import math
 
 from simulator.Ticker.BaseTicker import BaseTicker
@@ -8,12 +9,16 @@ from simulator.TradeManager.TradeManagerInterface import TradeManagerInterface
 
 from typing import Optional
 
+from common.Logger import Logger
+
 
 class TradeManager(TradeManagerInterface):
     wallet: Optional[Wallet] = None
+    logger: logging.getLogger()
 
     def __init__(self):
         super().__init__()
+        self.logger = Logger.get_logger(self.__class__.__name__)
 
     def set_wallet(self, wallet: Wallet):
         self.wallet = wallet
@@ -39,6 +44,8 @@ class TradeManager(TradeManagerInterface):
         assert abs(transaction_total - actual_total) < 0.01  # Omit the very slight price diff
         self.wallet.decrease_cash_value(actual_total)
         self.wallet.update_ticker(ticker)
+        self.logger.info(
+            f'{date}: Bought {ticker.get_ticker_name()} * {share}shares @ {price_per_share} (on {on}), total: {price_per_share * share}')
         return True
 
     def sell(self, ticker: BaseTicker, amount: float = 0, share: int = 0, on: str = "Close",
@@ -56,4 +63,6 @@ class TradeManager(TradeManagerInterface):
         assert transaction_total == actual_total
         self.wallet.add_cash_value(actual_total)
         self.wallet.update_ticker(ticker)
+        self.logger.info(
+            f'{date}: Sold {ticker.get_ticker_name()} * {share}shares @ {price_per_share} (on {on}), total: {price_per_share * share}')
         return True
