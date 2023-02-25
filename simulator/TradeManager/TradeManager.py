@@ -36,19 +36,19 @@ class TradeManager(TradeManagerInterface):
         if self.wallet.get_cash_value() < transaction_total:
             raise ValueError(f"Insufficient fund, require {transaction_total}, but got {self.wallet.get_cash_value()}")
         actual_total = ticker.buy(share=share, on=on, date=date)
-        assert transaction_total == actual_total
+        assert abs(transaction_total - actual_total) < 0.01  # Omit the very slight price diff
         self.wallet.decrease_cash_value(actual_total)
         self.wallet.update_ticker(ticker)
         return True
 
     def sell(self, ticker: BaseTicker, amount: float = 0, share: int = 0, on: str = "Close",
              date: datetime.date = None) -> bool:
-        price_per_share = self.get_quote(ticker, share, on, date=date)
+        price_per_share = self.get_quote(ticker, 1, on, date=date)
 
         if amount > 0 and not share:
             share = math.floor(amount / price_per_share)
 
-        transaction_total = self.get_quote(ticker, 1, on, date=date)
+        transaction_total = self.get_quote(ticker, share, on, date=date)
         if ticker.get_holding_share_number() < share:
             raise ValueError(
                 f"Insufficient share holding, reuqire {share}, but currently have {ticker.get_holding_share_number()}")
