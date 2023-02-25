@@ -1,7 +1,7 @@
 #  Copyright (c) 2023.
 import datetime
 
-from simulator.Ticker.BaseTicker import BaseTicker as Ticker
+from simulator.Ticker.BaseTicker import BaseTicker
 from simulator.Wallet.WalletInterface import WalletInterface
 
 
@@ -42,8 +42,20 @@ class BaseWallet(WalletInterface):
         self.holding_cash -= value
         return self.holding_cash
 
-    def update_ticker(self, ticker: Ticker) -> None:
+    def update_ticker(self, ticker: BaseTicker) -> None:
+        # Early return when the ticker to update is not in holding, and we are not holding any ticker
+        if ticker.get_ticker_name() not in self.holding_ticker and ticker.get_holding_share_number() == 0:
+            return
         if ticker.get_holding_share_number() == 0:
             del self.holding_ticker[ticker.get_ticker_name()]
         else:
             self.holding_ticker[ticker.get_ticker_name()] = ticker
+
+    def get_holding_ticker_by_name(self, name: str) -> BaseTicker:
+        """
+        This method returns the ticker in the holding list.
+        Ticker must be currently hold, or the method will raise a ValueError.
+        :param name: Ticker name
+        :return: ticker
+        """
+        return self.holding_ticker[name]

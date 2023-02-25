@@ -1,11 +1,11 @@
 #  Copyright (c) 2023.
 import datetime
 from typing import Dict
-from simulator.Ticker.BaseTicker import BaseTicker as Ticker
+from simulator.Ticker.BaseTicker import BaseTicker
 
 
 class WalletInterface:
-    holding_ticker: Dict[str, Ticker] = {}
+    holding_ticker: Dict[str, BaseTicker] = {}
     holding_cash = None
 
     def __init__(self):
@@ -62,10 +62,19 @@ class WalletInterface:
         """
         raise NotImplementedError()
 
-    def update_ticker(self, ticker: Ticker) -> None:
+    def update_ticker(self, ticker: BaseTicker) -> None:
         """
         This method updates the holding ticker property
         :param ticker: ticker to be updated
         :return: None
+        """
+        raise NotImplementedError()
+
+    def get_holding_ticker_by_name(self, name: str) -> BaseTicker:
+        """
+        This method returns the ticker in the holding list.
+        Ticker must be currently hold, or the method will raise a ValueError.
+        :param name: Ticker name
+        :return: ticker
         """
         raise NotImplementedError()
