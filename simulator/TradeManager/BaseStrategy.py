@@ -5,11 +5,13 @@ import pandas
 
 from simulator.TradeManager.StrategyInterface import StrategyInterface
 from simulator.TradeManager.TradeManager import TradeManager
+from simulator.Wallet.BaseWallet import BaseWallet
+from common.Logger import Logger
 
 
 class BaseStrategy(StrategyInterface):
 
-    def __init__(self, description: str = None):
+    def __init__(self, description: str = None, wallet: BaseWallet = None):
         """
         Sets some description of the BaseStrategy
         :param description:
@@ -17,6 +19,8 @@ class BaseStrategy(StrategyInterface):
         super().__init__()
         self.description = description
         self.name = self.__class__.__name__
+        self.wallet = wallet
+        self.logger = Logger.get_logger(self.__class__.__name__)
 
     def get_name(self):
         return self.name
@@ -24,5 +28,5 @@ class BaseStrategy(StrategyInterface):
     def check(self, date: datetime.date = None, history_data: pandas.DataFrame = None) -> bool:
         pass
 
-    def execute(self, trade_manager: TradeManager) -> None:
+    def execute(self, trade_manager: TradeManager, date: datetime.date = None) -> None:
         pass
