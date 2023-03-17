@@ -1,6 +1,7 @@
 #  Copyright (c) 2023.
 import datetime
 
+from common.Logger import Logger
 from simulator.Ticker.BaseTicker import BaseTicker
 from simulator.Wallet.WalletInterface import WalletInterface
 
@@ -10,6 +11,7 @@ class BaseWallet(WalletInterface):
     def __init__(self, initial_cash_value: float = 0):
         super().__init__()
         self._set_initial_cash(initial_cash_value)
+        self.logger = Logger.get_logger(self.__class__.__name__)
 
     def _set_initial_cash(self, value: float) -> None:
         self.holding_cash = value
@@ -59,3 +61,8 @@ class BaseWallet(WalletInterface):
         :return: ticker
         """
         return self.holding_ticker[name]
+
+    def get_summary(self, date: datetime.date):
+        return (
+            f'Total: {self.get_total_asset_value(date)}, Cash: {self.get_cash_value()}, '
+            f'Holding: {[{ticker.get_ticker_name(): {f"{ticker.get_holding_share_number()}, ${ticker.get_holding_values(date=date)}"}} for _, ticker in self.holding_ticker.items()]}')
