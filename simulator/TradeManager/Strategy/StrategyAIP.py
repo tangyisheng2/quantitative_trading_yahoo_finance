@@ -5,13 +5,15 @@ from simulator.Ticker.TickerFactory import TickerFactory
 import datetime
 import pandas
 
+from simulator.Wallet.BaseWallet import BaseWallet
+
 
 class StrategyAIP(BaseStrategy):
     tqqq_amount = 500
     hndl_amount = 500
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, wallet: BaseWallet = None):
+        super().__init__(wallet=wallet)
 
     def _get_first_monday_on_current_month(self, date: datetime.date) -> datetime.date:
         """
@@ -32,7 +34,11 @@ class StrategyAIP(BaseStrategy):
         return date.day == first_monday.day
 
     def execute(self, trade_manager: TradeManager, date: datetime.date = None) -> None:
-        tqqq_ticker = TickerFactory.get_instance("TQQQ")
-        hndl_ticker = TickerFactory.get_instance("HNDL")
+        try:
+            tqqq_ticker = self.wallet.get_holding_ticker_by_name("TQQQ")
+            hndl_ticker = self.wallet.get_holding_ticker_by_name("HNDL")
+        except KeyError:
+            tqqq_ticker = TickerFactory.get_instance("TQQQ")
+            hndl_ticker = TickerFactory.get_instance("HNDL")
         trade_manager.buy(tqqq_ticker, amount=self.tqqq_amount, on="Close", date=date)
         trade_manager.buy(hndl_ticker, amount=self.hndl_amount, on="Close", date=date)

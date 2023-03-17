@@ -30,8 +30,11 @@ class StrategyRebalance(BaseStrategy):
         return date.month in [6, 12] and date.day == first_tuesday.day
 
     def execute(self, trade_manager: TradeManager, date: datetime.date = None) -> None:
-        tqqq_ticker = self.wallet.get_holding_ticker_by_name("TQQQ")
-        hndl_ticker = self.wallet.get_holding_ticker_by_name("HNDL")
+        try:
+            tqqq_ticker = self.wallet.get_holding_ticker_by_name("TQQQ")
+            hndl_ticker = self.wallet.get_holding_ticker_by_name("HNDL")
+        except KeyError:
+            return
 
         diff = abs(tqqq_ticker.get_holding_values() - hndl_ticker.get_holding_values()) / 2
 
