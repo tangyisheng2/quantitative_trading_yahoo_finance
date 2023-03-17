@@ -5,6 +5,7 @@ import logging
 import pandas as pd
 from yfinance import Ticker
 
+from common.Logger import Logger
 from simulator.Ticker.TickerInterface import TickerInterface
 
 from typing import Optional
@@ -23,6 +24,7 @@ class BaseTicker(TickerInterface):
         self._set_ticker(ticker)
         self._set_ticker_name(name)
         self.holding = 0
+        self.logger = Logger.get_logger(self.__class__.__name__)
 
     def _set_ticker(self, ticker: Ticker) -> None:
         self.ticker = ticker
@@ -49,8 +51,7 @@ class BaseTicker(TickerInterface):
         try:
             ans = self.history.loc[date]
         except KeyError:
-            logging.warning("Can't fetch today's data before market close, fetch yesterdays data instead")
-            ans = self.history.loc[date - datetime.timedelta(days=1)]
+            ans = None
 
         return ans
 
@@ -116,5 +117,10 @@ class BaseTicker(TickerInterface):
     def get_holding_values(self, date: datetime.date = None) -> float:
         if not date:
             date = datetime.date.today()
-        close_price = self.get_data_on_date(date).loc["Close"]
-        return self.get_holding_share_number() * float(close_price)
+        try:
+            close_price = self.get_data_on_date(date).loc["Close"]
+            return self.get_holding_share_number() * float(close_price)
+        except KeyError:
+            logging.warning(f'Data not found at {date}')
+        except AttributeError:
+            return -1
